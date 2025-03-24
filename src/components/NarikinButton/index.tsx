@@ -40,22 +40,30 @@ function index(props: Props) {
   }, [progress])
 
   const animate = useCallback(() => {
+    const startTime = performance.now();
+    const startValue = progress; // ← 外の state 値を基準に
+  
     const target = targetRef.current;
-
-    setProgress((prev) => {
-      const diff = target - prev;
-
-      if (Math.abs(diff) < 15) {
-        cancelAnimationFrame(animateRef.current!);
-        setTimeout(() => setIsAnimating(false), 2000); // アニメーション終了
-        return target;
+  
+    const loop = (now: number) => {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / 1000, 1); // [0, 1] の進行度
+  
+      // イージング関数（ease-out）
+      const easeOut = 1 - Math.pow(1 - t, 3); // easeOutCubic
+  
+      const next = startValue + (target - startValue) * easeOut;
+      setProgress(next);
+  
+      if (t < 1) {
+        animateRef.current = requestAnimationFrame(loop);
+      } else {
+        setTimeout(() => setIsAnimating(false), 2000); // 終了処理
       }
-
-      const step = diff * 0.1;
-      animateRef.current = requestAnimationFrame(animate);
-      return prev + step;
-    });
-  }, []);
+    };
+  
+    animateRef.current = requestAnimationFrame(loop);
+  }, [progress]);
 
   const angle = progress / 10;
 
