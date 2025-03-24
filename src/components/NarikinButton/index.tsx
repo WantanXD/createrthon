@@ -46,6 +46,7 @@ function index(props: Props) {
       if (Math.abs(diff) < 5) {
         cancelAnimationFrame(animateRef.current!);
         setTimeout(() => setIsAnimating(false), 2000); // アニメーション終了
+        console.log("animation ended.");
         return targetRef.current;
       }
 
