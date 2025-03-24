@@ -63,6 +63,7 @@ function index(props: Props) {
     };
   
     animateRef.current = requestAnimationFrame(loop);
+
   }, [progress]);
 
   const angle = progress / 10;
