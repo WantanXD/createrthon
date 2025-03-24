@@ -40,15 +40,17 @@ function index(props: Props) {
   }, [progress])
 
   const animate = useCallback(() => {
+    const target = targetRef.current;
+
     setProgress((prev) => {
-      const diff = targetRef.current - prev;
-      console.log(`$diff: ${diff}, targetRef.current: ${targetRef.current}, prev: ${prev}`);
+      const diff = target - prev;
+      console.log(`$diff: ${diff}, targetRef.current: ${target}, prev: ${prev}`);
 
       if (Math.abs(diff) < 5) {
         cancelAnimationFrame(animateRef.current!);
         setTimeout(() => setIsAnimating(false), 2000); // アニメーション終了
         console.log("animation ended.");
-        return targetRef.current;
+        return target;
       }
 
       const step = diff * 0.1;
