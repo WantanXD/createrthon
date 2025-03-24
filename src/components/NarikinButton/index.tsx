@@ -53,9 +53,9 @@ function index(props: Props) {
 
       const step = diff * 0.1;
       animateRef.current = requestAnimationFrame(animate);
+      console.log(`next step: ${prev + step}`);
       return prev + step;
     });
-    
   }, []);
 
   const angle = progress / 10;
