@@ -9,12 +9,16 @@ import PlayerWindow from '@/components/PlayerWindow';
 import { useParams, useRouter } from 'next/navigation';
 import BusinessWindow from '@/components/BusinessWindow';
 import AgeDisplay from '@/components/AgeDisplay';
+import RandomEventModal from '@/components/RandomEventModal';
+import { generateRandomEvents } from '@/data/randomEvent';
 
 function page() {
   const router = useRouter();
   const name = decodeURIComponent(useParams().name as string);
 
-  const [credit, setCredit] = useState<number>(10000);
+  const seasons = ["春", "夏", "秋", "冬"];
+
+  const [credit, setCredit] = useState<number>(7500);
   const [narikin, setNarikin] = useState<number>(1000);
   const [hp, setHp] = useState<number>(50000);
   const [follower, setFollower] = useState<number>(1000);
@@ -23,10 +27,17 @@ function page() {
   const [age, setAge] = useState<number>(80); // 春夏秋冬 * （最長）80年 = 320秒
   const [isGameStop, setIsGameStop] = useState<boolean>(false);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
+  const [isHappeningEvent, setIsHappeningEvent] = useState<number>(-1);
 
   useEffect(() => {
     const countAge = setInterval(() => {
-      if(!isGameStop) setAge(current => current + 1);
+      if(!isGameStop) {
+        setAge(current => current + 1);
+        if (Math.random() < 0.003) { // 0.3%の確率でランダムイベント
+          setIsGameStop(true);
+          setIsHappeningEvent(Math.floor(Math.random() * 100 % generateRandomEvents().length));
+        }
+      }
     }, 1000);
     return () => clearInterval(countAge);
   }, [isGameStop]);
@@ -102,10 +113,24 @@ function page() {
           </div>
         </div>
       </div>
+      <RandomEventModal
+        name={name}
+        setHp={setHp}
+        setCredit={setCredit}
+        setReduceEffects={setReduceEffects}
+        event={isHappeningEvent}
+        handleClose={() => {
+          setIsGameStop(false);
+          setIsHappeningEvent(-1);
+        }}
+      />
       {isGameOver && (
         <div className={styles.gameOverGray}>
           <div className={styles.gameOver}>
             昇天
+          </div>
+          <div className={styles.result}>
+            あなたの記録：{Math.floor(age / 4)}歳{seasons[age % 4]}
           </div>
           <button
             className={styles.restart} 

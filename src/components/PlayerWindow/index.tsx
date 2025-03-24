@@ -30,7 +30,7 @@ function index(props: Props) {
       }
     }, 10);
     return () => clearInterval(playerHeal);
-  }, [props.isSleep]);
+  }, [props.isSleep, props.isGameStop]);
   
   return (
     <div className={styles.playerWindow}>

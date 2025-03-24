@@ -30,7 +30,7 @@ function index(props: Props) {
     // 一秒ごとに数値を加算
     const timer = setInterval(() => !props.isGameStop && setProgress(prev => prev + Math.floor(props.age / 70)), 10);
     return () => clearInterval(timer);
-  }, [progress]);
+  }, [progress, props.isGameStop]);
 
   useEffect(() => {
     // フォロワーが0になったらゲームオーバー

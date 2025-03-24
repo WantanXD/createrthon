@@ -84,6 +84,11 @@ function index(props: Props) {
   
             // 成長率は±5%以上遷移しない
             stock.rate = Math.max(-0.05, Math.min(0.05, stock.rate));
+
+            // -4.5%を下回る成長率を記録した場合、確率で倒産する（<=5%）
+            if (stock.rate < -4.5 && Math.random() <= 0.05) {
+              stock.isBankrupt = true;
+            }
   
             // 価値を変動
             stock.value = stock.value * (1 + stock.rate);

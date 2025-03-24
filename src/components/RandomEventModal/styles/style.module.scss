@@ -1,0 +1,50 @@
+.modalContainer {
+  position: fixed;
+  border: 4px solid green;
+  border-radius: 5px;
+  background-color: lightgreen;
+  width: 600px;
+  height: 400px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .title {
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .content {
+    width: 90%;
+    margin: 10px auto;
+  }
+
+  .button {
+    margin-top: 10px;
+    width: 80%;
+    height: 30px;
+    border: 1px solid black;
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .result {
+    font-weight: bold;
+    margin-top: 20px;
+    width: 90%;
+  }
+
+  .effect {
+    margin-top: 10px;
+    color: red;
+    font-weight: bold;
+  }
+}
