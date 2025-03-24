@@ -2,7 +2,7 @@
 import { resetStock } from "@/data/stocks";
 import styles from "./styles/style.module.scss";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * メインプログラム
@@ -15,7 +15,9 @@ export default function Home() {
   const [name, setName] = useState<string>(initName ?? "");
 
   // ストックをリセット
-  resetStock();
+  useEffect(() => {
+    resetStock();
+  }, [])
 
   return (
     <>

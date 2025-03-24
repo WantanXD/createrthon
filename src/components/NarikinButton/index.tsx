@@ -44,18 +44,15 @@ function index(props: Props) {
 
     setProgress((prev) => {
       const diff = target - prev;
-      console.log(`$diff: ${diff}, targetRef.current: ${target}, prev: ${prev}`);
 
       if (Math.abs(diff) < 15) {
         cancelAnimationFrame(animateRef.current!);
         setTimeout(() => setIsAnimating(false), 2000); // アニメーション終了
-        console.log("animation ended.");
         return target;
       }
 
       const step = diff * 0.1;
       animateRef.current = requestAnimationFrame(animate);
-      console.log(`next step: ${prev + step}`);
       return prev + step;
     });
   }, []);
