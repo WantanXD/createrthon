@@ -1,4 +1,5 @@
 "use client";
+import { resetStock } from "@/data/stocks";
 import styles from "./styles/style.module.scss";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -12,6 +13,9 @@ export default function Home() {
   const searchParams = useSearchParams();
   const initName = searchParams.get("name");
   const [name, setName] = useState<string>(initName ?? "");
+
+  // ストックをリセット
+  resetStock();
 
   return (
     <>
