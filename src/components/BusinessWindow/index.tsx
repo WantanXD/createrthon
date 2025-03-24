@@ -8,9 +8,9 @@ import { WorkInformation } from '@/types/interfaces/WorkInformation';
 import { works } from '@/data/works';
 import { ReduceEffect } from '@/types/interfaces/ReduceEffect';
 import { StockInformation } from '@/types/interfaces/StockInformation';
-import { stocks } from '@/data/stocks';
 import { Snackbar } from '@mui/material';
 import SNS from './SNS';
+import { createStocks } from '@/data/stocks';
 
 interface Props {
   age: number;
@@ -32,6 +32,7 @@ function index(props: Props) {
   const [workSuggestions, setWorkSuggestions] = useState<WorkInformation[]>([]);
   const [workCount, setWorkCount] = useState<number>(0);
   const [snackbar, setSnackbar] = useState<boolean>(false);
+  const [stocks, setStocks] = useState<StockInformation[]>(createStocks());
 
   useEffect(() => {
     // workの処理
@@ -48,45 +49,50 @@ function index(props: Props) {
 
     // stockの処理
     if (props.age % 4 === 0) {
-      stocks.map(stock => {
-        // 倒産している企業はスキップ
-        if (!stock.isBankrupt) {
-          // まずは配当金を配布
-          if (stock.check) {
-            props.setCredit(current => current + Math.floor(stock.reward * 100));
-            props.setReduceEffects(current => [...current, { y: 30, startTime: performance.now(), value: Math.floor(stock.reward * 100) }])
-          }
-
-          stock.prev_rate = stock.rate;
-          stock.prev_value = stock.value;
-
-          // 乱数で成長率を決める
-          const volatility = Math.random() / 50.0;
-          const rand = Math.random() * 1000;
-          if (rand < 500 - stock.rate * 1000) {
-            // マイナス成長
-            if (stock.rate < 0) {
-              stock.rate -= volatility;
-            } else {
-              stock.rate -= volatility * (1 + stock.rate * 10);
+      setStocks(current => {
+        const newStocks: StockInformation[] = [];
+        current.map(stock => {
+          // 倒産している企業はスキップ
+          if (!stock.isBankrupt) {
+            // まずは配当金を配布
+            if (stock.check) {
+              props.setCredit(current => current + Math.floor(stock.reward * 100));
+              props.setReduceEffects(current => [...current, { y: 30, startTime: performance.now(), value: Math.floor(stock.reward * 100) }])
             }
-          } else {
-            // プラス成長
-            if (stock.rate > 0) {
-              stock.rate += volatility;
+  
+            stock.prev_rate = stock.rate;
+            stock.prev_value = stock.value;
+  
+            // 乱数で成長率を決める
+            const volatility = Math.random() / 50.0;
+            const rand = Math.random() * 1000;
+            if (rand < 500 - stock.rate * 1000) {
+              // マイナス成長
+              if (stock.rate < 0) {
+                stock.rate -= volatility;
+              } else {
+                stock.rate -= volatility * (1 + stock.rate * 10);
+              }
             } else {
-              stock.rate += volatility * (1 + -stock.rate * 10);
+              // プラス成長
+              if (stock.rate > 0) {
+                stock.rate += volatility;
+              } else {
+                stock.rate += volatility * (1 + -stock.rate * 10);
+              }
             }
+  
+            // 成長率は±5%以上遷移しない
+            stock.rate = Math.max(-0.05, Math.min(0.05, stock.rate));
+  
+            // 価値を変動
+            stock.value = stock.value * (1 + stock.rate);
+            // 配当を変動
+            stock.reward = stock.reward * (1 + stock.rate);
           }
-
-          // 成長率は±5%以上遷移しない
-          stock.rate = Math.max(-0.05, Math.min(0.05, stock.rate));
-
-          // 価値を変動
-          stock.value = stock.value * (1 + stock.rate);
-          // 配当を変動
-          stock.reward = stock.reward * (1 + stock.rate);
-        }
+          newStocks.push(stock);
+        });
+        return newStocks;
       });
     }
 
@@ -162,6 +168,7 @@ function index(props: Props) {
           />
         ) : business === 1 ? (
           <Stock 
+            stocks={stocks}
             buy={(stock: StockInformation) => {
               if (!props.isSleep) {
                 if (props.credit < Math.floor(stock.value*100)) {

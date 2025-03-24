@@ -1,9 +1,9 @@
 import React from 'react';
 import styles from "./styles/style.module.scss";
-import { stocks } from '@/data/stocks';
 import { StockInformation } from '@/types/interfaces/StockInformation';
 
 interface Props {
+  stocks: StockInformation[];
   buy: (stock: StockInformation) => void;
   sell: (stock: StockInformation) => void;
 }
@@ -11,7 +11,7 @@ interface Props {
 function index(props: Props) {
   return (
     <div className={styles.stockContainer}>
-      {stocks.map((stock, index) => (
+      {props.stocks.map((stock, index) => (
         <div 
           key={index}
           className={styles.stock}
