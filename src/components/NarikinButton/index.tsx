@@ -42,6 +42,7 @@ function index(props: Props) {
   const animate = useCallback(() => {
     setProgress((prev) => {
       const diff = targetRef.current - prev;
+      console.log(`$diff: ${diff}, targetRef.current: ${targetRef.current}, prev: ${prev}`);
 
       if (Math.abs(diff) < 5) {
         cancelAnimationFrame(animateRef.current!);
